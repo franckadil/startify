@@ -6,6 +6,10 @@
 .pnp.js
 .yarn/install-state.gz
 
+# Database
+/data
+/db
+
 # testing
 /coverage
 

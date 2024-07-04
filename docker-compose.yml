@@ -1,0 +1,38 @@
+networks:
+  launchpad_network:
+    driver: bridge
+
+services:
+  # Database
+  launchpaddb:
+    image: mysql:5.7
+    container_name: "${PROJECT_NAME}_mysql"
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./db:/var/lib/mysql
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${LAUNCHPAD_DB_NAME}"
+      MYSQL_USER: "${LAUNCHPAD_DB_USER}"
+      MYSQL_PASSWORD: "${LAUNCHPAD_DB_PASSWORD}"
+    restart: unless-stopped
+    networks:
+      - launchpad_network
+
+  # phpmyadmin
+  phpmyadmin:
+    depends_on:
+      - launchpaddb
+    image: phpmyadmin/phpmyadmin
+    container_name: "${PROJECT_NAME}_phpmyadmin"
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      PMA_HOST: "${PMA_HOST}"
+    networks:
+      - launchpad_network
